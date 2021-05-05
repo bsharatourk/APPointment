@@ -140,7 +140,8 @@ public class HomeActivity extends AppCompatActivity {
 
                     GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(HomeActivity.this);
                     if(signInAccount != null){
-                        showUpdateDialog(phoneEt.getText().toString(),"Jeries Abu Hattoum","j_a_hattom@hotmail.com");
+                        showUpdateDialog(phoneEt.getText().toString(),signInAccount.getDisplayName(),signInAccount.getEmail());
+                        dialog.dismiss();
                     }
                 }
 
@@ -192,9 +193,12 @@ public class HomeActivity extends AppCompatActivity {
             if(isLogin)
             {
                 Log.e(TAG,"Login was successful");
-                //dialog.show();
+                dialog.show();
 
-                // TODO: Check if user exists
+                if(Common.IS_LOGIN.equals("IsLogged")){
+
+                    dialog.dismiss();
+                }
             }
 
         }

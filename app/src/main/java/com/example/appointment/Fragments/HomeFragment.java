@@ -72,7 +72,7 @@ public class HomeFragment extends Fragment implements ILookbookLoadListener, IBa
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        unbinder = ButterKnife.bind(HomeFragment.this,view);
+        unbinder = ButterKnife.bind(this,view);
 
         //Init
         Slider.init(new PicassoImageLoadingService());
@@ -80,8 +80,12 @@ public class HomeFragment extends Fragment implements ILookbookLoadListener, IBa
         iBannerLoadListener = HomeFragment.this;
         iLookbookLoadListener = HomeFragment.this;
 
-        loadBanner();
-        loadLookBook();
+       // loadBanner();
+        //loadLookBook();
+        if(Common.IS_LOGIN.equals("IsLogged")){
+
+            setUserInformation();
+        }
 
         // TODO: Check if user logged ?
         /*if(AccountKit.getCurrentAccessToken() != null)
@@ -139,6 +143,7 @@ public class HomeFragment extends Fragment implements ILookbookLoadListener, IBa
     private void setUserInformation(){
         layout_user_information.setVisibility(View.VISIBLE);
         txt_user_name.setText(Common.currentUser.getFullName());
+
     }
     @Override
     public void onLookbookLoadSuccess(List<Banner> banners) {
