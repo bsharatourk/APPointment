@@ -19,6 +19,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -42,15 +43,24 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
 
-        FirebaseUser user = mAuth.getCurrentUser();
-        if(user!=null){
-            Common.setIsLogin("IsLogged");
-            GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(MainActivity.this);
-            Common.currentUser = new User(signInAccount.getDisplayName(),signInAccount.getEmail(),user.getPhoneNumber());
-            Log.e(TAG, "zebe2");
-            Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
-            startActivity(intent);
-        }
+
+
+
+
+        //checkIfUserExists(signInAccount,user);
+//        Log.e(TAG, user.getDisplayName() );
+
+//
+
+//        if(user!=null){
+//            //Common.currentUser.setPhoneNum(user.getPhoneNumber());
+//            Toast.makeText(MainActivity.this, user.toString(), Toast.LENGTH_SHORT).show();
+//            Common.setIsLogin("IsLogged");
+//            //Common.currentUser = new User(signInAccount.getDisplayName(),signInAccount.getEmail(),user.getPhoneNumber());
+//            Log.e(TAG, "zebe2");
+//            Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
+//            startActivity(intent);
+//        }
 
 
     }
@@ -62,8 +72,18 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
-
         mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        Log.e(TAG, "got here 1");
+
+        if (user!=null){
+            Common.LOGGED_IN_FLAG = true;
+            Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
+            startActivity(intent);
+        }
+
+        Log.e(TAG, "got here 2");
 
 
         createRequest();
@@ -75,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
                 signIn();
             }
         });
+
 
 
     }
@@ -128,7 +149,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
 
-
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener() {
@@ -137,24 +157,32 @@ public class MainActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Common.setIsLogin("IsLogged");
-                            GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(MainActivity.this);
-                            Common.currentUser = new User(signInAccount.getDisplayName(),signInAccount.getEmail(),user.getPhoneNumber());
+                            checkIfUserExists(acct,user);
                             Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
                             startActivity(intent);
-
 
                         } else {
                             Toast.makeText(MainActivity.this, "Sorry auth failed.", Toast.LENGTH_SHORT).show();
 
-
                         }
-
 
                         // ...
                     }
                 });
     }
+
+    public void checkIfUserExists(GoogleSignInAccount accountSign, FirebaseUser user){
+
+        if(user==null){
+            Common.currentUser = null;
+        }
+        else{
+            Common.currentUser = new User(accountSign.getDisplayName(),accountSign.getEmail(),user.getPhoneNumber());
+            Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
+            startActivity(intent);
+        }
+    }
+
 
 
 }

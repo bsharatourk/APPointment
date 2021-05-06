@@ -60,6 +60,9 @@ public class HomeFragment extends Fragment implements ILookbookLoadListener, IBa
     IBannerLoadListener iBannerLoadListener;
     ILookbookLoadListener iLookbookLoadListener;
 
+    @BindView(R.id.phonNum)
+    TextView phone;
+
 
     public HomeFragment() {
         bannerRef = FirebaseFirestore.getInstance().collection("Banner");
@@ -74,13 +77,15 @@ public class HomeFragment extends Fragment implements ILookbookLoadListener, IBa
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         unbinder = ButterKnife.bind(this,view);
 
-        Toast.makeText(getContext(),"Home fragment hi: "+Common.currentUser.getUserEmail()+" "+Common.currentUser.getFullName()+" "+Common.currentUser.getPhoneNum(),Toast.LENGTH_LONG).show();
+        //Toast.makeText(getContext(),"Home fragment hi: "+Common.currentUser.getUserEmail()+" "+Common.currentUser.getFullName()+" "+Common.currentUser.getPhoneNum(),Toast.LENGTH_LONG).show();
 
         //Init
         Slider.init(new PicassoImageLoadingService());
 
         iBannerLoadListener = HomeFragment.this;
         iLookbookLoadListener = HomeFragment.this;
+
+//        phone.setText(Common.currentUser.getPhoneNum() );
 
        // loadBanner();
         //loadLookBook();

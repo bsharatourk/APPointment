@@ -99,6 +99,14 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         ButterKnife.bind(HomeActivity.this);
 
+        //Log.e(TAG, "Common.LOGGED_IN_FLAG");
+//
+//        if (!Common.LOGGED_IN_FLAG){
+//            FirebaseAuth.getInstance().signOut();
+//            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+//            startActivity(intent);
+//        }
+
         //FireStore
 
         //Show phone authentication
@@ -130,56 +138,63 @@ public class HomeActivity extends AppCompatActivity {
         pd.setTitle("Please Wait ...");
         pd.setCanceledOnTouchOutside(false);
 
-
-        if(firebaseAuth.getCurrentUser().getPhoneNumber() !=null){
-            phoneVerify.dismiss();
-        }else {
-            mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-                @Override
-                public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
+        //Toast.makeText(this,firebaseAuth.getCurrentUser().getPhoneNumber(),Toast.LENGTH_SHORT).show();
+        Log.e(TAG, "GOY HERE 3");
+        if(firebaseAuth.getCurrentUser() !=null){
+            Log.e(TAG, "GOY HERE 4: "+firebaseAuth.getCurrentUser().getPhoneNumber());
+            if (firebaseAuth.getCurrentUser().getPhoneNumber()==null) {
+                Log.e(TAG, "GOY HERE 5");
+                mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+                    @Override
+                    public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
             /* This will unfold in two situations:
                 1-the phone num will instantly be verified.
                 2-google will auto detect the OTP code and will
                 fill it auto.
              */
-                    signInWithPhoneAuthCredntial(phoneAuthCredential);
+                        signInWithPhoneAuthCredntial(phoneAuthCredential);
 
-                    GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(HomeActivity.this);
-                    if(signInAccount != null){
-                        showUpdateDialog(phoneEt.getText().toString(),signInAccount.getDisplayName(),signInAccount.getEmail());
-                        dialog.dismiss();
+                        GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(HomeActivity.this);
+                        Log.e(TAG, "GOY HERE 6");
+                        if (signInAccount != null) {
+                            Log.e(TAG, "GOY HERE 7");
+                            showUpdateDialog(phoneEt.getText().toString(), signInAccount.getDisplayName(), signInAccount.getEmail());
+                            dialog.dismiss();
+                        }
                     }
-                }
 
-                @Override
-                public void onVerificationFailed(@NonNull FirebaseException e) {
+                    @Override
+                    public void onVerificationFailed(@NonNull FirebaseException e) {
             /*
                 this will unfold when invalid request happen
                 for instance if the phone num format isnt valid
              */
-                    pd.dismiss();
-                    Toast.makeText(HomeActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
+                        pd.dismiss();
+                        Toast.makeText(HomeActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
 
-                @Override
-                public void onCodeSent(@NonNull String verificationId, @NonNull PhoneAuthProvider.ForceResendingToken token) {
-                    super.onCodeSent(verificationId, forceResendingToken);
+                    @Override
+                    public void onCodeSent(@NonNull String verificationId, @NonNull PhoneAuthProvider.ForceResendingToken token) {
+                        super.onCodeSent(verificationId, forceResendingToken);
                 /*
                 The Sms verification has been sent to the provided phone number and we
                 now need to ask the user to enter the code and then construct a credential
                 by combining the code with a verification ID.
                  */
-                    Log.d(TAG, "onCodeSent " + verificationId);
+                        Log.d(TAG, "onCodeSent " + verificationId);
 
-                    mVerificationId = verificationId;
-                    forceResendingToken = token;
-                    pd.dismiss();
+                        mVerificationId = verificationId;
+                        forceResendingToken = token;
+                        pd.dismiss();
 
-                    Toast.makeText(HomeActivity.this, "Verification Code Sent", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(HomeActivity.this, "Verification Code Sent", Toast.LENGTH_SHORT).show();
 
-                    //numTextView.setText("Please Type The Verification Code We Sent \nto " + findViewById(R.id.phoneNum).toString());
-                }
-            };
+                        //numTextView.setText("Please Type The Verification Code We Sent \nto " + findViewById(R.id.phoneNum).toString());
+                    }
+                };
+            }else {
+                phoneVerify.dismiss();
+            }
         }
 
 
@@ -297,7 +312,8 @@ public class HomeActivity extends AppCompatActivity {
 
                         //start profile activity
                         phoneVerify.dismiss();
-                        dialog.show();
+                        //Common.setPhone(phone);
+                        //dialog.show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -355,11 +371,16 @@ public class HomeActivity extends AppCompatActivity {
 
     public void SendCode(View view) {
         //register user to fireBase
+        if (phoneEt.getText().length()!=10){
+            Toast.makeText(this, "Enter your phone number", Toast.LENGTH_SHORT).show();
+        }else {
+            startPhoneNumberVerification("+972"+phoneEt.getText().toString());
 
-        startPhoneNumberVerification("+972"+phoneEt.getText().toString());
+            phone.setVisibility(View.INVISIBLE);
+            code.setVisibility(View.VISIBLE);
+        }
 
-        phone.setVisibility(View.INVISIBLE);
-        code.setVisibility(View.VISIBLE);
+
 
         //progressBar.setVisibility(View.GONE);
 
