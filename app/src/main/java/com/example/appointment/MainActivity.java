@@ -44,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
 
         FirebaseUser user = mAuth.getCurrentUser();
         if(user!=null){
+            Common.setIsLogin("IsLogged");
+            GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(MainActivity.this);
+            Common.currentUser = new User(signInAccount.getDisplayName(),signInAccount.getEmail(),user.getPhoneNumber());
             Log.e(TAG, "zebe2");
             Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
             startActivity(intent);
@@ -136,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
                             Common.setIsLogin("IsLogged");
                             GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(MainActivity.this);
-                            Common.setCurrentUser(new User(signInAccount.getDisplayName(),signInAccount.getEmail(),"1023951123"));
+                            Common.currentUser = new User(signInAccount.getDisplayName(),signInAccount.getEmail(),user.getPhoneNumber());
                             Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
                             startActivity(intent);
 
