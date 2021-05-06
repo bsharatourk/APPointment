@@ -21,6 +21,10 @@ public class User {
         return userEmail;
     }
 
+    public void setPhoneNum(String phoneNum) {
+        this.phoneNum = phoneNum;
+    }
+
     public String getPhoneNum() {
         return phoneNum;
     }

@@ -25,8 +25,10 @@ import com.example.appointment.Fragments.HomeFragment;
 import com.example.appointment.Fragments.ShoppingFragment;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.textfield.TextInputEditText;
@@ -40,6 +42,8 @@ import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.concurrent.TimeUnit;
@@ -94,6 +98,8 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(HomeActivity.this);
+
+        //FireStore
 
         //Show phone authentication
         phoneVerify = new Dialog(HomeActivity.this);
@@ -192,7 +198,29 @@ public class HomeActivity extends AppCompatActivity {
             boolean isLogin = getIntent().getBooleanExtra(Common.IS_LOGIN,false);
             if(isLogin)
             {
-                Log.e(TAG,"Login was successful");
+                dialog.show();
+                if(Common.currentUser !=null){
+                    DocumentReference currentUser = userRef.document(Common.currentUser.getPhoneNum());
+                    currentUser.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if(task.isSuccessful()){
+                                DocumentSnapshot userSnapShot = task.getResult();
+                                if(!userSnapShot.exists()){
+                                    showUpdateDialog(Common.currentUser.getPhoneNum(),Common.currentUser.getFullName(),Common.currentUser.getUserEmail());
+                                }
+                                if (dialog.isShowing())
+                                {
+                                    dialog.dismiss();
+                                }
+
+                            }
+                        }
+                    });
+                }
+                else{
+                    Toast.makeText(HomeActivity.this,"Error Please Logg In",Toast.LENGTH_SHORT).show();
+                }
                 dialog.show();
 
                 if(Common.IS_LOGIN.equals("IsLogged")){
@@ -250,6 +278,22 @@ public class HomeActivity extends AppCompatActivity {
                         pd.dismiss();
                         String phone = firebaseAuth.getCurrentUser().getPhoneNumber();
                         Toast.makeText(HomeActivity.this , "Logged In as"+ phone, Toast.LENGTH_SHORT).show();
+
+                        //SAVE IN FIRESTORE DATABASE
+                        CollectionReference ref = db.collection("Client");
+                        Common.currentUser.setPhoneNum(phone);
+
+                        ref.document(phone).set(Common.currentUser).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Toast.makeText(HomeActivity.this,"The Client Is Added.",Toast.LENGTH_LONG).show();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(HomeActivity.this,e.getMessage(),Toast.LENGTH_LONG).show();
+                            }
+                        });
 
                         //start profile activity
                         phoneVerify.dismiss();
@@ -339,11 +383,6 @@ public class HomeActivity extends AppCompatActivity {
 
     // this dialog should be in the check if user exists
     private void showUpdateDialog(final String phoneNumber , String fullname , String email){
-
-        if (dialog.isShowing())
-        {
-            dialog.dismiss();
-        }
 
         //Init dialog
         bottomSheetDialog = new BottomSheetDialog(HomeActivity.this);
