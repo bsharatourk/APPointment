@@ -1,17 +1,14 @@
 package com.example.appointment;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.appointment.Common.Common;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -19,14 +16,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 @SuppressWarnings("unchecked")
 public class MainActivity extends AppCompatActivity {
@@ -36,32 +33,25 @@ public class MainActivity extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
     private final static int RC_SIGN_IN = 123;
     private FirebaseAuth mAuth;
-
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
     @Override
     protected void onStart() {
         super.onStart();
-
-
-
-
-
-
-        //checkIfUserExists(signInAccount,user);
-//        Log.e(TAG, user.getDisplayName() );
-
+//        User user = Common.currentUser;
+        mAuth.addAuthStateListener(mAuthListener);
 //
-
-//        if(user!=null){
-//            //Common.currentUser.setPhoneNum(user.getPhoneNumber());
-//            Toast.makeText(MainActivity.this, user.toString(), Toast.LENGTH_SHORT).show();
+//        FirebaseUser mfirebaseuser = mAuth.getCurrentUser();
+//
+//        if(mfirebaseuser!=null){
+//           // Common.currentUser.setPhoneNum(user.getPhoneNum());
+//            Toast.makeText(MainActivity.this, mfirebaseuser.toString(), Toast.LENGTH_SHORT).show();
 //            Common.setIsLogin("IsLogged");
-//            //Common.currentUser = new User(signInAccount.getDisplayName(),signInAccount.getEmail(),user.getPhoneNumber());
+//            Common.currentUser = new User(mfirebaseuser.getDisplayName(),mfirebaseuser.getEmail(),null);
 //            Log.e(TAG, "zebe2");
 //            Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
 //            startActivity(intent);
 //        }
-
 
     }
 
@@ -73,19 +63,37 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
+
+
+//        mAuthListener = new FirebaseAuth.AuthStateListener(){
+//            @Override
+//            public  void  onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth){
+//                FirebaseUser user = firebaseAuth.getCurrentUser();
+//
+//                if(user !=null){
+//                    Log.e(TAG, "got here 44658");
+//                    Common.setIsLogin("IsLogged");
+//                    Common.currentUser = new User(user.getDisplayName(),user.getEmail(),user.getPhoneNumber());
+//                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+//                    startActivity(intent);
+//                    finish();
+//                }
+//            }
+//        };
 
         Log.e(TAG, "got here 1");
 
-        if (user!=null){
-            Common.LOGGED_IN_FLAG = true;
-            Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
-            startActivity(intent);
-        }
+//        if (user!=null){
+//            Common.LOGGED_IN_FLAG = true;
+//            Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
+//            startActivity(intent);
+//        }
+//
+     //   Log.e(TAG, mAuth.getCurrentUser().getDisplayName());
 
         Log.e(TAG, "got here 2");
 
-
+        checkuser();
         createRequest();
 
 
@@ -96,8 +104,40 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
 
+    protected void onDestroy(){
+        super.onDestroy();
+        mAuth.signOut();
+    }
 
+    private void checkuser() {
+
+        FirebaseUser mUser = mAuth.getCurrentUser();
+        if(mUser != null){
+            Log.e(TAG, "got here 44658");
+            Common.setIsLogin("IsLogged");
+            Common.currentUser = new User(mUser.getDisplayName(),mUser.getEmail(),mUser.getPhoneNumber());
+            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+                mAuthListener = new FirebaseAuth.AuthStateListener(){
+            @Override
+            public  void  onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth){
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+
+                if(user !=null){
+                    Log.e(TAG, "got here 44658");
+                    Common.setIsLogin("IsLogged");
+                    Common.currentUser = new User(user.getDisplayName(),user.getEmail(),user.getPhoneNumber());
+                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        };
     }
 
 
@@ -173,14 +213,35 @@ public class MainActivity extends AppCompatActivity {
 
     public void checkIfUserExists(GoogleSignInAccount accountSign, FirebaseUser user){
 
-        if(user==null){
-            Common.currentUser = null;
-        }
-        else{
-            Common.currentUser = new User(accountSign.getDisplayName(),accountSign.getEmail(),user.getPhoneNumber());
-            Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
-            startActivity(intent);
-        }
+
+        FirebaseAuth.AuthStateListener authStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if (firebaseAuth.getCurrentUser() != null){
+                    Common.currentUser = new User(accountSign.getDisplayName(),accountSign.getEmail(),user.getPhoneNumber());
+                    Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
+                    startActivity(intent);
+                }
+                else {
+                    Common.currentUser = null;
+                }
+            }
+        };
+
+        //Init and attach
+        mAuth = FirebaseAuth.getInstance();
+        mAuth.addAuthStateListener(authStateListener);
+
+
+
+//        if(user==null){
+//            Common.currentUser = null;
+//        }
+//        else{
+//            Common.currentUser = new User(accountSign.getDisplayName(),accountSign.getEmail(),user.getPhoneNumber());
+//            Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
+//            startActivity(intent);
+//        }
     }
 
 

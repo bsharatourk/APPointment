@@ -36,6 +36,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
@@ -57,7 +58,7 @@ public class HomeActivity extends AppCompatActivity {
     //DataBase Ref
     DatabaseReference databaseUser;
     private FirebaseFirestore db;
-
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
 
     //if code sent failed , it will resend OTP
     private PhoneAuthProvider.ForceResendingToken forceResendingToken;
@@ -99,6 +100,8 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         ButterKnife.bind(HomeActivity.this);
 
+
+        databaseUser = FirebaseDatabase.getInstance().getReference("Client");
         //Log.e(TAG, "Common.LOGGED_IN_FLAG");
 //
 //        if (!Common.LOGGED_IN_FLAG){
@@ -129,7 +132,7 @@ public class HomeActivity extends AppCompatActivity {
 
         //DataBase
         FirebaseApp.initializeApp(this);
-        databaseUser = FirebaseDatabase.getInstance().getReference("User");
+        databaseUser = FirebaseDatabase.getInstance().getReference("Client");
         db = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -137,6 +140,13 @@ public class HomeActivity extends AppCompatActivity {
         pd = new ProgressDialog( this);
         pd.setTitle("Please Wait ...");
         pd.setCanceledOnTouchOutside(false);
+
+
+//        if(Common.IS_LOGIN=="IsLogged"){
+//            Intent intent = new Intent(getApplicationContext(), HomeFragment.class);
+//            startActivity(intent);
+//        }
+
 
         //Toast.makeText(this,firebaseAuth.getCurrentUser().getPhoneNumber(),Toast.LENGTH_SHORT).show();
         Log.e(TAG, "GOY HERE 3");
@@ -147,11 +157,11 @@ public class HomeActivity extends AppCompatActivity {
                 mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                     @Override
                     public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
-            /* This will unfold in two situations:
-                1-the phone num will instantly be verified.
-                2-google will auto detect the OTP code and will
-                fill it auto.
-             */
+                        /* This will unfold in two situations:
+                            1-the phone num will instantly be verified.
+                            2-google will auto detect the OTP code and will
+                            fill it auto.
+                         */
                         signInWithPhoneAuthCredntial(phoneAuthCredential);
 
                         GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(HomeActivity.this);
@@ -165,10 +175,10 @@ public class HomeActivity extends AppCompatActivity {
 
                     @Override
                     public void onVerificationFailed(@NonNull FirebaseException e) {
-            /*
-                this will unfold when invalid request happen
-                for instance if the phone num format isnt valid
-             */
+                    /*
+                        this will unfold when invalid request happen
+                        for instance if the phone num format isnt valid
+                     */
                         pd.dismiss();
                         Toast.makeText(HomeActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
@@ -176,11 +186,11 @@ public class HomeActivity extends AppCompatActivity {
                     @Override
                     public void onCodeSent(@NonNull String verificationId, @NonNull PhoneAuthProvider.ForceResendingToken token) {
                         super.onCodeSent(verificationId, forceResendingToken);
-                /*
-                The Sms verification has been sent to the provided phone number and we
-                now need to ask the user to enter the code and then construct a credential
-                by combining the code with a verification ID.
-                 */
+                        /*
+                        The Sms verification has been sent to the provided phone number and we
+                        now need to ask the user to enter the code and then construct a credential
+                        by combining the code with a verification ID.
+                         */
                         Log.d(TAG, "onCodeSent " + verificationId);
 
                         mVerificationId = verificationId;
@@ -293,10 +303,13 @@ public class HomeActivity extends AppCompatActivity {
                         pd.dismiss();
                         String phone = firebaseAuth.getCurrentUser().getPhoneNumber();
                         Toast.makeText(HomeActivity.this , "Logged In as"+ phone, Toast.LENGTH_SHORT).show();
+                        Common.currentUser.setPhoneNum(phone);
+
+                        //Saving in Realtime
+                        databaseUser.setValue(Common.currentUser);
 
                         //SAVE IN FIRESTORE DATABASE
                         CollectionReference ref = db.collection("Client");
-                        Common.currentUser.setPhoneNum(phone);
 
                         ref.document(phone).set(Common.currentUser).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
@@ -312,7 +325,7 @@ public class HomeActivity extends AppCompatActivity {
 
                         //start profile activity
                         phoneVerify.dismiss();
-                        //Common.setPhone(phone);
+                        Common.setPhone(phone);
                         //dialog.show();
                     }
                 })
