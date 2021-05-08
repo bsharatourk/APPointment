@@ -253,7 +253,7 @@ public class HomeActivity extends AppCompatActivity {
 
                         //start profile activity
                         phoneVerify.dismiss();
-                        dialog.show();
+                        //dialog.show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

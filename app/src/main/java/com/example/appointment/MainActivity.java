@@ -43,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         FirebaseUser user = mAuth.getCurrentUser();
+
+
+
         if(user!=null){
             Log.e(TAG, "zebe2");
             Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
