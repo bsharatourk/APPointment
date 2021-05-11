@@ -5,10 +5,8 @@ public class User {
 
     String fullName;
     String phoneNum;
-    String userEmail;
 
-    public User(String fullName,String userEmail, String phoneNum) {
-        this.userEmail = userEmail;
+    public User(String fullName, String phoneNum) {
         this.fullName = fullName;
         this.phoneNum = phoneNum;
     }
@@ -17,12 +15,15 @@ public class User {
         return fullName;
     }
 
-    public  String getUserEmail(){
-        return userEmail;
-    }
-
     public String getPhoneNum() {
         return phoneNum;
     }
 
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public void setPhoneNum(String phoneNum) {
+        this.phoneNum = phoneNum;
+    }
 }

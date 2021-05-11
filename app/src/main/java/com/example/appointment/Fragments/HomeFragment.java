@@ -1,6 +1,7 @@
 package com.example.appointment.Fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -48,6 +50,9 @@ public class HomeFragment extends Fragment implements ILookbookLoadListener, IBa
     @BindView(R.id.txt_user_name)
     TextView txt_user_name;
 
+    @BindView((R.id.txt_member_type))
+    TextView txt_member;
+
     @BindView(R.id.banner_slider)
     Slider banner_slider;
     @BindView(R.id.recycler_look_book)
@@ -77,8 +82,10 @@ public class HomeFragment extends Fragment implements ILookbookLoadListener, IBa
         //Init
         Slider.init(new PicassoImageLoadingService());
 
-        iBannerLoadListener = HomeFragment.this;
-        iLookbookLoadListener = HomeFragment.this;
+//        iBannerLoadListener = HomeFragment.this;
+//        iLookbookLoadListener = HomeFragment.this;
+
+//        Log.e("HomeFragment", "onCreateView: current user check: "+Common.currentUser.getPhoneNum());
 
        // loadBanner();
         //loadLookBook();
@@ -143,7 +150,7 @@ public class HomeFragment extends Fragment implements ILookbookLoadListener, IBa
     private void setUserInformation(){
         layout_user_information.setVisibility(View.VISIBLE);
         txt_user_name.setText(Common.currentUser.getFullName());
-
+        txt_member.setText(Common.currentUser.getPhoneNum());
     }
     @Override
     public void onLookbookLoadSuccess(List<Banner> banners) {

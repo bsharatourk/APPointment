@@ -4,9 +4,12 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +43,7 @@ import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.concurrent.TimeUnit;
@@ -89,11 +93,18 @@ public class HomeActivity extends AppCompatActivity {
 
     AlertDialog dialog;
 
+//    //shared Preferences
+//    SharedPreferences shrd;
+//    SharedPreferences.Editor editor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(HomeActivity.this);
+
+//        shrd = getSharedPreferences("userSave",MODE_PRIVATE);
+//        editor = shrd.edit();
 
         //Show phone authentication
         phoneVerify = new Dialog(HomeActivity.this);
@@ -114,8 +125,8 @@ public class HomeActivity extends AppCompatActivity {
         phoneVerify.show();
 
         //DataBase
-        FirebaseApp.initializeApp(this);
-        databaseUser = FirebaseDatabase.getInstance().getReference("User");
+        //FirebaseApp.initializeApp(this);
+        databaseUser = FirebaseDatabase.getInstance().getReference("Client");
         db = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -125,7 +136,10 @@ public class HomeActivity extends AppCompatActivity {
         pd.setCanceledOnTouchOutside(false);
 
 
-        if(firebaseAuth.getCurrentUser().getPhoneNumber() !=null){
+        if(firebaseAuth.getCurrentUser() !=null){
+//            Common.currentUser.setPhoneNum(firebaseAuth.getCurrentUser().getPhoneNumber());
+//            Common.currentUser.setFullName(firebaseAuth.getCurrentUser().getDisplayName());
+//            Common.setIsLogin("IsLogged");
             phoneVerify.dismiss();
         }else {
             mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
@@ -140,7 +154,7 @@ public class HomeActivity extends AppCompatActivity {
 
                     GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(HomeActivity.this);
                     if(signInAccount != null){
-                        showUpdateDialog(phoneEt.getText().toString(),signInAccount.getDisplayName(),signInAccount.getEmail());
+                        showUpdateDialog(phoneEt.getText().toString());
                         dialog.dismiss();
                     }
                 }
@@ -179,7 +193,7 @@ public class HomeActivity extends AppCompatActivity {
 
         //Init
         userRef = FirebaseFirestore.getInstance().collection("Client");
-        dialog = new SpotsDialog.Builder().setContext(HomeActivity.this).setCancelable(false).build();
+        dialog = new SpotsDialog.Builder().setContext(HomeActivity.this).setCancelable(true).build();
 
 
         //Check intent if its login = true , enable full access
@@ -196,7 +210,6 @@ public class HomeActivity extends AppCompatActivity {
                 dialog.show();
 
                 if(Common.IS_LOGIN.equals("IsLogged")){
-
                     dialog.dismiss();
                 }
             }
@@ -214,9 +227,6 @@ public class HomeActivity extends AppCompatActivity {
                 else if(menuItem.getItemId() == R.id.action_shopping){
                     fragment = new ShoppingFragment();
                 }
-
-
-
                 return loadFragment(fragment);
             }
         });
@@ -224,6 +234,27 @@ public class HomeActivity extends AppCompatActivity {
         bottomNavigationView.setSelectedItemId(R.id.action_home);
 
     }
+
+    @Override
+    public void finishActivity(int requestCode) {
+        super.finishActivity(requestCode);
+        Log.e("finishActivity", "finished");
+        firebaseAuth.signOut();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.e("OnDestroy", "distroyed");
+        firebaseAuth.signOut();
+    }
+
+//    @Override
+//    protected void onRestart() {
+//        super.onRestart();
+//        Log.e("onRestart", "restart");
+//        firebaseAuth.signOut();
+//    }
 
     private void startPhoneNumberVerification(String phone){
         pd.setMessage("Verifying Phone Number");
@@ -241,7 +272,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private void signInWithPhoneAuthCredntial(PhoneAuthCredential credential) {
         pd.setMessage("Logging In");
-
+        Toast.makeText(HomeActivity.this , "Logged In as"+ phone, Toast.LENGTH_SHORT).show();
         firebaseAuth.signInWithCredential(credential)
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
@@ -250,10 +281,37 @@ public class HomeActivity extends AppCompatActivity {
                         pd.dismiss();
                         String phone = firebaseAuth.getCurrentUser().getPhoneNumber();
                         Toast.makeText(HomeActivity.this , "Logged In as"+ phone, Toast.LENGTH_SHORT).show();
+                        //Common.currentUser.setPhoneNum(phone);
+                        //Saving in Realtime
+                        databaseUser.setValue(Common.currentUser);
+                        //SAVE IN FIRESTORE DATABASE
+                        CollectionReference ref = db.collection("Client");
+                        //DocumentReference docRef = db.collection("client").document(Common.currentUser.phoneNum);
+//                        ref.document(phone).set(Common.currentUser).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                            @Override
+//                            public void onSuccess(Void aVoid) {
+//                                Toast.makeText(HomeActivity.this,"The Client Is Added.",Toast.LENGTH_LONG).show();
+//                                Log.e("HomeActivity", "After client is added: Common.currentUser: "+Common.currentUser.getPhoneNum());
+//                                Common.setIsLogin("isLogin");
+////                                editor.putString("fullName", Common.currentUser.getFullName());
+////                                editor.putString("email", Common.currentUser.getUserEmail());
+////                                editor.putString("phoneNum", Common.currentUser.getPhoneNum());
+////                                editor.apply();
+//                                Log.e("HomeActivity", "After client is added: Common.currentUser.isLogin: "+Common.IS_LOGIN);
+//                            }
+//                        }).addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//                                Toast.makeText(HomeActivity.this,e.getMessage(),Toast.LENGTH_LONG).show();
+//                            }
+//                        });
 
                         //start profile activity
                         phoneVerify.dismiss();
-                        //dialog.show();
+                        Common.setIsLogin("IsLogged");
+                        //Common.setPhone(phone);
+                        showUpdateDialog(phone);
+                        Log.e("HomeActivity", "signINWithPhone: got here and dismissed");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -323,8 +381,8 @@ public class HomeActivity extends AppCompatActivity {
 
     public void LogOut(View view) {
         FirebaseAuth.getInstance().signOut();
-        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+//        startActivity(intent);
     }
 
 
@@ -338,7 +396,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     // this dialog should be in the check if user exists
-    private void showUpdateDialog(final String phoneNumber , String fullname , String email){
+    private void showUpdateDialog(final String phoneNumber ){
 
         if (dialog.isShowing())
         {
@@ -356,9 +414,9 @@ public class HomeActivity extends AppCompatActivity {
 
         //
         final TextInputEditText edt_name = (TextInputEditText)sheetView.findViewById(R.id.edit_name);
-        final TextInputEditText edt_email = (TextInputEditText)sheetView.findViewById(R.id.edit_email);
-        edt_email.setText(email);
-        edt_name.setText(fullname);
+        Log.e("edt_name","before");
+        edt_name.setText("");
+        Log.e("edt_name","after");
         btn_update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -368,7 +426,7 @@ public class HomeActivity extends AppCompatActivity {
                     dialog.show();
                 }
 
-                final User user = new User(edt_name.getText().toString(),edt_email.getText().toString(),phoneNumber);
+                final User user = new User(edt_name.getText().toString(),phoneNumber);
                 userRef.document(phoneNumber).set(user)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
@@ -396,6 +454,8 @@ public class HomeActivity extends AppCompatActivity {
                 });
             }
         });
+        //show home fragment
+
         bottomSheetDialog.setContentView(sheetView);
         bottomSheetDialog.show();
     }
