@@ -47,6 +47,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.concurrent.TimeUnit;
+import java.util.function.IntToDoubleFunction;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -122,7 +123,7 @@ public class HomeActivity extends AppCompatActivity {
         phone.setVisibility(View.VISIBLE);
         code.setVisibility(View.INVISIBLE);
 
-        phoneVerify.show();
+
 
         //DataBase
         //FirebaseApp.initializeApp(this);
@@ -135,13 +136,14 @@ public class HomeActivity extends AppCompatActivity {
         pd.setTitle("Please Wait ...");
         pd.setCanceledOnTouchOutside(false);
 
+//        Log.e("currentUser", firebaseAuth.getCurrentUser().toString());
 
-        if(firebaseAuth.getCurrentUser() !=null){
-//            Common.currentUser.setPhoneNum(firebaseAuth.getCurrentUser().getPhoneNumber());
-//            Common.currentUser.setFullName(firebaseAuth.getCurrentUser().getDisplayName());
-//            Common.setIsLogin("IsLogged");
+        if(firebaseAuth.getCurrentUser()!=null){
             phoneVerify.dismiss();
+//            startActivity(new Intent(this, HomeFragment.class));
+//            finish();
         }else {
+            phoneVerify.show();
             mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                 @Override
                 public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
@@ -152,11 +154,11 @@ public class HomeActivity extends AppCompatActivity {
              */
                     signInWithPhoneAuthCredntial(phoneAuthCredential);
 
-                    GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(HomeActivity.this);
-                    if(signInAccount != null){
-                        showUpdateDialog(phoneEt.getText().toString());
-                        dialog.dismiss();
-                    }
+//                    GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(HomeActivity.this);
+//                    if(signInAccount != null){
+//                        showUpdateDialog(phoneEt.getText().toString());
+//                        dialog.dismiss();
+//                    }
                 }
 
                 @Override
@@ -235,13 +237,30 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public void finishActivity(int requestCode) {
-        super.finishActivity(requestCode);
-        Log.e("finishActivity", "finished");
-        firebaseAuth.signOut();
-    }
-
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//    }
+//
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        Log.e("onStop", "stoped");
+//        firebaseAuth.signOut();
+//    }
+//
+//    @Override
+//    protected void onRestart() {
+//        super.onRestart();
+//
+//    }
+//
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        onCreate();
+//    }
+//
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -379,11 +398,11 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
-    public void LogOut(View view) {
-        FirebaseAuth.getInstance().signOut();
-//        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-//        startActivity(intent);
-    }
+//    public void LogOut(View view) {
+//        FirebaseAuth.getInstance().signOut();
+////        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+////        startActivity(intent);
+//    }
 
 
     private boolean loadFragment(Fragment fragment) {
