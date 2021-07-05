@@ -58,7 +58,6 @@ public class HomeActivity extends AppCompatActivity {
     //DataBase Ref
     DatabaseReference databaseUser;
     private FirebaseFirestore db;
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
 
     //if code sent failed , it will resend OTP
     private PhoneAuthProvider.ForceResendingToken forceResendingToken;
@@ -80,9 +79,13 @@ public class HomeActivity extends AppCompatActivity {
     LinearLayout code;
     LinearLayout phone;
 
-    Dialog phoneVerify;
+    TextView numTextView;
+    TextView txt_user_name;
 
-    TextView name, mail, family;
+    Dialog phoneVerify;
+    Dialog userlayout;
+
+    String name, mail;
 
 
     @BindView(R.id.bottom_navigation)
@@ -102,16 +105,13 @@ public class HomeActivity extends AppCompatActivity {
 
 
         databaseUser = FirebaseDatabase.getInstance().getReference("Client");
-        //Log.e(TAG, "Common.LOGGED_IN_FLAG");
-//
-//        if (!Common.LOGGED_IN_FLAG){
-//            FirebaseAuth.getInstance().signOut();
-//            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-//            startActivity(intent);
-//        }
 
         //FireStore
-
+        GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(this);
+        if(signInAccount != null){
+            name=signInAccount.getDisplayName();
+            mail=signInAccount.getEmail();
+        }
         //Show phone authentication
         phoneVerify = new Dialog(HomeActivity.this);
         phoneVerify.setContentView(R.layout.custom_dialog);
@@ -119,11 +119,22 @@ public class HomeActivity extends AppCompatActivity {
         phoneVerify.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
         phoneVerify.setCancelable(false);
 
+        userlayout = new Dialog(HomeActivity.this);
+        userlayout.setContentView(R.layout.fragment_home);
+        phoneVerify.getWindow().setBackgroundDrawable(getDrawable(R.drawable.background));
+        phoneVerify.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        phoneVerify.setCancelable(false);
+
+        txt_user_name = (TextView)userlayout.findViewById(R.id.txt_user_name);
+        txt_user_name.setText(name);
+
         code = (LinearLayout) phoneVerify.findViewById(R.id.CodeLl);
         phone = (LinearLayout) phoneVerify.findViewById(R.id.phoneLl);
 
         codeEt = (EditText)phoneVerify.findViewById(R.id.codeEt);
         phoneEt = (EditText)phoneVerify.findViewById(R.id.phoneEt);
+
+        numTextView = (TextView)phoneVerify.findViewById(R.id.numTextView);
 
         phone.setVisibility(View.VISIBLE);
         code.setVisibility(View.INVISIBLE);
@@ -141,19 +152,8 @@ public class HomeActivity extends AppCompatActivity {
         pd.setTitle("Please Wait ...");
         pd.setCanceledOnTouchOutside(false);
 
-
-//        if(Common.IS_LOGIN=="IsLogged"){
-//            Intent intent = new Intent(getApplicationContext(), HomeFragment.class);
-//            startActivity(intent);
-//        }
-
-
-        //Toast.makeText(this,firebaseAuth.getCurrentUser().getPhoneNumber(),Toast.LENGTH_SHORT).show();
-        Log.e(TAG, "GOY HERE 3");
         if(firebaseAuth.getCurrentUser() !=null){
-            Log.e(TAG, "GOY HERE 4: "+firebaseAuth.getCurrentUser().getPhoneNumber());
             if (firebaseAuth.getCurrentUser().getPhoneNumber()==null) {
-                Log.e(TAG, "GOY HERE 5");
                 mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                     @Override
                     public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
@@ -165,10 +165,8 @@ public class HomeActivity extends AppCompatActivity {
                         signInWithPhoneAuthCredntial(phoneAuthCredential);
 
                         GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(HomeActivity.this);
-                        Log.e(TAG, "GOY HERE 6");
                         if (signInAccount != null) {
-                            Log.e(TAG, "GOY HERE 7");
-                            showUpdateDialog(phoneEt.getText().toString(), signInAccount.getDisplayName(), signInAccount.getEmail());
+                            showUpdateDialog(phoneEt.getText().toString(), name, mail);
                             dialog.dismiss();
                         }
                     }
@@ -191,7 +189,6 @@ public class HomeActivity extends AppCompatActivity {
                         now need to ask the user to enter the code and then construct a credential
                         by combining the code with a verification ID.
                          */
-                        Log.d(TAG, "onCodeSent " + verificationId);
 
                         mVerificationId = verificationId;
                         forceResendingToken = token;
@@ -199,7 +196,7 @@ public class HomeActivity extends AppCompatActivity {
 
                         Toast.makeText(HomeActivity.this, "Verification Code Sent", Toast.LENGTH_SHORT).show();
 
-                        //numTextView.setText("Please Type The Verification Code We Sent \nto " + findViewById(R.id.phoneNum).toString());
+                        numTextView.setText("Please Type The Verification Code We Sent \nto " + phoneEt.getText().toString());
                     }
                 };
             }else {
@@ -217,9 +214,6 @@ public class HomeActivity extends AppCompatActivity {
         //if is login = false let user around shopping to view
         if(getIntent() !=null)
         {
-
-            Log.e(TAG,"check was successful");
-
             boolean isLogin = getIntent().getBooleanExtra(Common.IS_LOGIN,false);
             if(isLogin)
             {
@@ -232,7 +226,7 @@ public class HomeActivity extends AppCompatActivity {
                             if(task.isSuccessful()){
                                 DocumentSnapshot userSnapShot = task.getResult();
                                 if(!userSnapShot.exists()){
-                                    showUpdateDialog(Common.currentUser.getPhoneNum(),Common.currentUser.getFullName(),Common.currentUser.getUserEmail());
+                                    showUpdateDialog(phoneEt.getText().toString(),name,mail);
                                 }
                                 if (dialog.isShowing())
                                 {
@@ -261,7 +255,7 @@ public class HomeActivity extends AppCompatActivity {
             Fragment fragment = null;
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                if (menuItem.getItemId() == R.id.action_home){
+                if (menuItem.getItemId() == R.id.action_Profile){
                     fragment = new HomeFragment();
                 }
                 else if(menuItem.getItemId() == R.id.action_shopping){
@@ -274,7 +268,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        bottomNavigationView.setSelectedItemId(R.id.action_home);
+        bottomNavigationView.setSelectedItemId(R.id.action_Profile);
 
     }
 
@@ -301,17 +295,14 @@ public class HomeActivity extends AppCompatActivity {
                     public void onSuccess(AuthResult authResult) {
                         //Successfully signed in
                         pd.dismiss();
-                        String phone = firebaseAuth.getCurrentUser().getPhoneNumber();
+                        String phone = phoneEt.getText().toString();
                         Toast.makeText(HomeActivity.this , "Logged In as"+ phone, Toast.LENGTH_SHORT).show();
-                        Common.currentUser.setPhoneNum(phone);
-
-                        //Saving in Realtime
-                        databaseUser.setValue(Common.currentUser);
-
+                        User user = new User(name,mail,phone);
+                        Common.setCurrentUser(user);
+                        Common.setIsLogin("isLogin");
                         //SAVE IN FIRESTORE DATABASE
                         CollectionReference ref = db.collection("Client");
-
-                        ref.document(phone).set(Common.currentUser).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        ref.document(mail).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Toast.makeText(HomeActivity.this,"The Client Is Added.",Toast.LENGTH_LONG).show();
@@ -326,7 +317,6 @@ public class HomeActivity extends AppCompatActivity {
                         //start profile activity
                         phoneVerify.dismiss();
                         Common.setPhone(phone);
-                        //dialog.show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -394,9 +384,6 @@ public class HomeActivity extends AppCompatActivity {
         }
 
 
-
-        //progressBar.setVisibility(View.GONE);
-
     }
 
     public void LogOut(View view) {
@@ -424,14 +411,9 @@ public class HomeActivity extends AppCompatActivity {
         bottomSheetDialog.setCanceledOnTouchOutside(false);
         bottomSheetDialog.setCancelable(false);
         View sheetView = getLayoutInflater().inflate(R.layout.layout_update_information,null);
-
         Button btn_update = (Button)sheetView.findViewById(R.id.btn_approve);
 
         //
-        final TextInputEditText edt_name = (TextInputEditText)sheetView.findViewById(R.id.edit_name);
-        final TextInputEditText edt_email = (TextInputEditText)sheetView.findViewById(R.id.edit_email);
-        edt_email.setText(email);
-        edt_name.setText(fullname);
         btn_update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -441,8 +423,8 @@ public class HomeActivity extends AppCompatActivity {
                     dialog.show();
                 }
 
-                final User user = new User(edt_name.getText().toString(),edt_email.getText().toString(),phoneNumber);
-                userRef.document(phoneNumber).set(user)
+                final User user = new User(fullname,email,phoneNumber);
+                userRef.document(mail).set(user)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
@@ -453,7 +435,7 @@ public class HomeActivity extends AppCompatActivity {
                                 }
 
                                 Common.currentUser = user;
-                                bottomNavigationView.setSelectedItemId(R.id.action_home);
+                                bottomNavigationView.setSelectedItemId(R.id.action_Profile);
                                 Toast.makeText(HomeActivity.this,"Thank You",Toast.LENGTH_SHORT).show();
                             }
                         }).addOnFailureListener(new OnFailureListener() {

@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/action_home"
-        android:icon="@drawable/ic_home_home_24dp"
-        android:title="Home"/>
 
+    <item android:id="@+id/action_Profile"
+        android:icon="@drawable/ic_home_home_24dp"
+        android:title="Profile"/>
     <item android:id="@+id/action_shopping"
         android:icon="@drawable/ic_baseline_shopping_cart_24"
         android:title="Shopping"/>
+    <item android:id="@+id/action_Logout"
+        android:icon="@drawable/ic_home_home_24dp"
+        android:title="Logout"/>
 
 </menu>

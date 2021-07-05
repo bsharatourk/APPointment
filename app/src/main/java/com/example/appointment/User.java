@@ -25,6 +25,14 @@ public class User {
         this.phoneNum = phoneNum;
     }
 
+    public void setUserEmail(String email) {
+        this.userEmail = email;
+    }
+
+    public void setFullName(String name) {
+        this.fullName = name;
+    }
+
     public String getPhoneNum() {
         return phoneNum;
     }

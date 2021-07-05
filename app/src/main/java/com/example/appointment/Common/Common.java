@@ -3,15 +3,11 @@ package com.example.appointment.Common;
 import com.example.appointment.User;
 
 
-public class Common {
+public class  Common {
     public static String IS_LOGIN = "NotLogged";
     public static User currentUser;
     public static String phone;
     public static boolean LOGGED_IN_FLAG = false;
-
-    public static String getPhone() {
-        return phone;
-    }
 
     public static void setPhone(String phone) {
         Common.phone = phone;

@@ -69,13 +69,13 @@
             android:textSize="35dp" />
 
         <TextView
-            android:id="@+id/resendCodeTv"
+            android:id="@+id/numTextView"
             style="@style/TextAppearance.MaterialComponents.Caption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="ResendBtn"
             android:padding="5dp"
-            android:text="Didn't get the code?"
+            android:text="Code was sent to : "
             android:textAlignment="center"
             android:textColor="#777777" />
 
@@ -103,6 +103,16 @@
             android:onClick="SubmitBtn"
             android:text="Submit" />
 
+        <TextView
+            android:id="@+id/resendCodeTv"
+            style="@style/TextAppearance.MaterialComponents.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="ResendBtn"
+            android:padding="5dp"
+            android:text="Didn't get the code?"
+            android:textAlignment="center"
+            android:textColor="#777777" />
 
 
     </LinearLayout>
