@@ -82,16 +82,15 @@ public class HomeFragment extends Fragment implements ILookbookLoadListener, IBa
         //Init
         Slider.init(new PicassoImageLoadingService());
 
-        iBannerLoadListener = HomeFragment.this;
-        iLookbookLoadListener = HomeFragment.this;
+        iBannerLoadListener = this;
+        iLookbookLoadListener = this;
 
-//        phone.setText(Common.currentUser.getPhoneNum() );
+        phone.setText(Common.phone );
 
-       // loadBanner();
-        //loadLookBook();
         if(Common.IS_LOGIN.equals("IsLogged")){
-
             setUserInformation();
+            loadBanner();
+            loadLookBook();
         }
 
         // TODO: Check if user logged ?
@@ -126,19 +125,20 @@ public class HomeFragment extends Fragment implements ILookbookLoadListener, IBa
     }
 
     private void loadBanner() {
-        bannerRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                List<Banner> banners = new ArrayList<>();
-                if (task.isSuccessful()){
-                    for (QueryDocumentSnapshot bannerSnapShot:task.getResult()){
-                        Banner banner = bannerSnapShot.toObject(Banner.class);
-                        banners.add(banner);
+        bannerRef.get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        List<Banner> banners = new ArrayList<>();
+                        if (task.isSuccessful()){
+                            for (QueryDocumentSnapshot bannerSnapShot:task.getResult()){
+                                Banner banner = bannerSnapShot.toObject(Banner.class);
+                                banners.add(banner);
+                            }
+                            iBannerLoadListener.onBannerLoadSuccess(banners);
+                        }
                     }
-                    iBannerLoadListener.onBannerLoadSuccess(banners);
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
+                }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 iBannerLoadListener.onBannerLoadFailed(e.getMessage());
@@ -149,7 +149,7 @@ public class HomeFragment extends Fragment implements ILookbookLoadListener, IBa
 
     private void setUserInformation(){
         layout_user_information.setVisibility(View.VISIBLE);
-        txt_user_name.setText(Common.currentUser.getFullName());
+        txt_user_name.setText(Common.name);
 
     }
     @Override
@@ -161,7 +161,7 @@ public class HomeFragment extends Fragment implements ILookbookLoadListener, IBa
 
     @Override
     public void onLookbookLoadFailed(String message) {
-        Toast.makeText(getActivity(),"",Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(),message,Toast.LENGTH_SHORT).show();
     }
 
     @Override

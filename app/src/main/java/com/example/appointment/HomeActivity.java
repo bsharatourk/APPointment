@@ -40,8 +40,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -111,7 +114,13 @@ public class HomeActivity extends AppCompatActivity {
         if(signInAccount != null){
             name=signInAccount.getDisplayName();
             mail=signInAccount.getEmail();
+            Common.setIsLogin("IsLogged");
+            Common.setName(name);
+           // bottomNavigationView.setSelectedItemId(R.id.action_Profile);
+
         }
+
+
         //Show phone authentication
         phoneVerify = new Dialog(HomeActivity.this);
         phoneVerify.setContentView(R.layout.custom_dialog);
@@ -262,13 +271,10 @@ public class HomeActivity extends AppCompatActivity {
                     fragment = new ShoppingFragment();
                 }
 
-
-
                 return loadFragment(fragment);
             }
         });
 
-        bottomNavigationView.setSelectedItemId(R.id.action_Profile);
 
     }
 
@@ -435,7 +441,7 @@ public class HomeActivity extends AppCompatActivity {
                                 }
 
                                 Common.currentUser = user;
-                                bottomNavigationView.setSelectedItemId(R.id.action_Profile);
+                               // bottomNavigationView.setSelectedItemId(R.id.action_Profile);
                                 Toast.makeText(HomeActivity.this,"Thank You",Toast.LENGTH_SHORT).show();
                             }
                         }).addOnFailureListener(new OnFailureListener() {

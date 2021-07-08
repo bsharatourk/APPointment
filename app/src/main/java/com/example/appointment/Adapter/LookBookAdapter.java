@@ -20,6 +20,16 @@ public class LookBookAdapter extends RecyclerView.Adapter<LookBookAdapter.MyView
     Context context;
     List<Banner> lookbook;
 
+    public class MyViewHolder extends RecyclerView.ViewHolder{
+        ImageView imageView;
+        public MyViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            imageView = (ImageView)itemView.findViewById(R.id.image_look_book);
+
+        }
+    }
+
     public LookBookAdapter(Context context, List<Banner> lookbook) {
         this.context = context;
         this.lookbook = lookbook;
@@ -28,7 +38,8 @@ public class LookBookAdapter extends RecyclerView.Adapter<LookBookAdapter.MyView
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View itemView = LayoutInflater.from(context).inflate(R.layout.layout_look_book,viewGroup,false);
+        View itemView = LayoutInflater.from(context)
+                .inflate(R.layout.layout_look_book,viewGroup,false);
         return new MyViewHolder(itemView);
     }
 
@@ -42,13 +53,4 @@ public class LookBookAdapter extends RecyclerView.Adapter<LookBookAdapter.MyView
         return lookbook.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder{
-        ImageView imageView;
-        public MyViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            imageView = (ImageView)itemView.findViewById(R.id.image_look_book);
-
-        }
-    }
 }
