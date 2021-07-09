@@ -107,9 +107,8 @@ public class BookingStep1Fragment extends Fragment implements IAllSalonLoadListe
                 if(task.isSuccessful()){
                     List<String> list = new ArrayList<>();
                     list.add("Please choose your current place ");
-                    for (QueryDocumentSnapshot documentSnapshot:task.getResult()){
+                    for (QueryDocumentSnapshot documentSnapshot:task.getResult())
                         list.add(documentSnapshot.getId());
-                    }
                     iAllSalonLoadListener.onAllSalonLoadSuccess(list);
                 }
             }
