@@ -28,7 +28,7 @@
 
         app:sv_typeface="@font/abril_fatface"/>
 
-        <androidx.viewpager.widget.ViewPager
+        <com.example.appointment.Common.NonSwipeViewPager
             android:id="@+id/view_pager"
             android:layout_below="@+id/step_view"
             android:layout_above="@+id/layout_button"
@@ -61,6 +61,7 @@
             <Button
                 android:id="@+id/btn_next_step"
                 android:text="Next"
+                android:enabled="false"
                 android:fontFamily="@font/abril_fatface"
                 android:layout_gravity="center_horizontal"
                 android:layout_above="@+id/txt_skip"

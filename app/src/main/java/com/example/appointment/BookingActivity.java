@@ -1,12 +1,20 @@
 package com.example.appointment;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.appointment.Adapter.MyViewPagerAdapter;
+import com.example.appointment.Common.Common;
+import com.example.appointment.Common.NonSwipeViewPager;
 import com.shuhart.stepview.StepView;
 
 import java.util.ArrayList;
@@ -14,17 +22,68 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class BookingActivity extends AppCompatActivity {
+
+    LocalBroadcastManager localBroadcastManager;
 
     @BindView(R.id.step_view)
     StepView stepView;
     @BindView(R.id.view_pager)
-    ViewPager viewPager;
+    NonSwipeViewPager viewPager;
     @BindView(R.id.btn_previous_step)
     Button btn_previous_step;
     @BindView(R.id.btn_next_step)
     Button btn_nest_step;
+
+    //Event
+    @OnClick(R.id.btn_previous_step)
+    void previousStep(){
+        if(Common.step == 3 || Common.step > 0){
+
+            Common.step--;
+            viewPager.setCurrentItem(Common.step);
+        }
+    }
+    @OnClick(R.id.btn_next_step)
+    void nextClick(){
+        if(Common.step < 3 || Common.step == 0)
+        {
+
+            // increase the step
+            Common.step++;
+
+            //after choosing a salon
+            if (Common.step == 1)
+            {
+                if(Common.currentSalon != null) {
+                    loadBarberSalon(Common.currentSalon.getSalonId());
+                }
+            }
+            viewPager.setCurrentItem(Common.step);
+        }
+    }
+
+    private void loadBarberSalon(String salonId) {
+
+    }
+
+    //Broadcast Receiver
+    private BroadcastReceiver buttonNextReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Common.currentSalon = intent.getParcelableExtra(Common.KET_SALON_STORE);
+            btn_nest_step.setEnabled(true);
+            setColorButton();
+        }
+    };
+
+    protected void onDestroy(){
+        localBroadcastManager.unregisterReceiver(buttonNextReceiver);
+        super.onDestroy();
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +91,15 @@ public class BookingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_booking);
         ButterKnife.bind(BookingActivity.this);
 
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        localBroadcastManager.registerReceiver(buttonNextReceiver,new IntentFilter(Common.KEY_ENABLE_BUTTON_NEXT));
+
         setupStepView();
         setColorButton();
 
         //View
         viewPager.setAdapter(new MyViewPagerAdapter(getSupportFragmentManager()));
+        viewPager.setOffscreenPageLimit(4);//a limitation for fragments
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -45,6 +108,7 @@ public class BookingActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int i) {
+                stepView.go(i,true);
                 if (i==0)
                     btn_previous_step.setEnabled(false);
                 else
