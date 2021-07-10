@@ -49,7 +49,7 @@
             android:id="@+id/google_signIn"
             android:layout_width="match_parent"
             android:layout_height="41dp"
-            android:drawableLeft="@drawable/round_b"
+            android:drawableLeft="@drawable/ic_account_circle_white_24dp"
             android:elevation="8dp"
             android:text="Sign In with Google"
             android:textColor="#fff" />

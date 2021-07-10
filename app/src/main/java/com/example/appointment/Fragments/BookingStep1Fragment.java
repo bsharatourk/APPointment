@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.appointment.Adapter.MySalonAdapter;
+import com.example.appointment.Common.Common;
 import com.example.appointment.Common.SpacesItemDecoration;
 import com.example.appointment.Interface.IAllSalonLoadListener;
 import com.example.appointment.Interface.IBannerLoadListener;
@@ -139,6 +140,8 @@ public class BookingStep1Fragment extends Fragment implements IAllSalonLoadListe
 
     private void loadBranchOfCity(String cityName){
         dialog.show();
+
+        Common.city = cityName;
 
         branchRef = FirebaseFirestore.getInstance()
                 .collection("AllSalon")
