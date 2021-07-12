@@ -64,7 +64,8 @@ public class MySalonAdapter extends RecyclerView.Adapter<MySalonAdapter.MyViewHo
 
                 //Sending a broadcast to tell booking that there is an activity
                 Intent intent = new Intent(Common.KEY_ENABLE_BUTTON_NEXT);
-                intent.putExtra(Common.KET_SALON_STORE,salonList.get(pos));
+                intent.putExtra(Common.KEY_SALON_STORE,salonList.get(pos));
+                intent.putExtra(Common.KEY_STEP,1);
                 localBroadcastManager.sendBroadcast(intent);
             }
         });

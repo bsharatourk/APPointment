@@ -2,6 +2,7 @@ package com.example.appointment.Fragments;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,21 +103,24 @@ public class BookingStep1Fragment extends Fragment implements IAllSalonLoadListe
     }
 
     private void loadAllSalon() {
-        allSalonRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        allSalonRef.get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
+                if(task.isSuccessful())
+                {
                     List<String> list = new ArrayList<>();
                     list.add("Please choose your current place ");
-                    for (QueryDocumentSnapshot documentSnapshot:task.getResult())
+                    for (QueryDocumentSnapshot documentSnapshot:task.getResult()){
                         list.add(documentSnapshot.getId());
+                    }
                     iAllSalonLoadListener.onAllSalonLoadSuccess(list);
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                iAllSalonLoadListener.onAllSalonLoadFailure(e.getMessage());
+                iAllSalonLoadListener.onAllSalonLoadFailed(e.getMessage());
             }
         });
 
@@ -136,6 +140,10 @@ public class BookingStep1Fragment extends Fragment implements IAllSalonLoadListe
                 }
             }
         });
+    }
+    @Override
+    public void onAllSalonLoadFailed(String message) {
+        Toast.makeText(getActivity(),message,Toast.LENGTH_SHORT).show();
     }
 
     private void loadBranchOfCity(String cityName){
@@ -163,14 +171,9 @@ public class BookingStep1Fragment extends Fragment implements IAllSalonLoadListe
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                iBranchLoadListener.onBranchLoadFailure(e.getMessage());
+                iBranchLoadListener.onBranchLoadFailed(e.getMessage());
             }
         });
-    }
-
-    @Override
-    public void onAllSalonLoadFailure(String message) {
-        Toast.makeText(getActivity(),message,Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -183,7 +186,7 @@ public class BookingStep1Fragment extends Fragment implements IAllSalonLoadListe
     }
 
     @Override
-    public void onBranchLoadFailure(String message) {
+    public void onBranchLoadFailed(String message) {
         Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
         dialog.dismiss();
     }

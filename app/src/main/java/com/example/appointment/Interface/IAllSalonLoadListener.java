@@ -5,6 +5,6 @@ import java.util.List;
 public interface IAllSalonLoadListener {
 
     void onAllSalonLoadSuccess(List<String> areaNameList);
-    void onAllSalonLoadFailure(String message);
+    void onAllSalonLoadFailed(String message);
 
 }

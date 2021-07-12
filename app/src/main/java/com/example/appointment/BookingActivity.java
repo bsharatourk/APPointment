@@ -76,8 +76,20 @@ public class BookingActivity extends AppCompatActivity {
                     loadBarberSalon(Common.currentSalon.getSalonId());
                 }
             }
+            else if (Common.step == 2) // Pick a Booking time
+            {
+                if (Common.currentBarber != null){
+                    loadTimeSlotOfBarber(Common.currentBarber.getBarberId());
+                }
+            }
             viewPager.setCurrentItem(Common.step);
         }
+    }
+
+    private void loadTimeSlotOfBarber(String barberId) {
+        //Send Local Broadcast to fragment step3
+        Intent intent = new Intent(Common.KEY_DISPLAY_TIME_SLOT);
+        localBroadcastManager.sendBroadcast(intent);
     }
 
     private void loadBarberSalon(String salonId) {
@@ -128,7 +140,16 @@ public class BookingActivity extends AppCompatActivity {
     private BroadcastReceiver buttonNextReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Common.currentSalon = intent.getParcelableExtra(Common.KET_SALON_STORE);
+
+            int step = intent.getIntExtra(Common.KEY_STEP,0);
+            if(step == 1){
+                Common.currentSalon = intent.getParcelableExtra(Common.KEY_SALON_STORE);
+            }else if (step == 2){
+                Common.currentBarber = intent.getParcelableExtra(Common.KEY_BARBER_SELECTED);
+            }
+
+
+            Common.currentSalon = intent.getParcelableExtra(Common.KEY_SALON_STORE);
             btn_nest_step.setEnabled(true);
             setColorButton();
         }
@@ -171,6 +192,8 @@ public class BookingActivity extends AppCompatActivity {
                 else
                     btn_previous_step.setEnabled(true);
 
+                //setting a disable button
+                btn_nest_step.setEnabled(false);
                 setColorButton();
             }
 

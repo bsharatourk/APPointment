@@ -39,7 +39,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
 
     //firebase implementations
-    implementation 'com.google.firebase:firebase-firestore:23.0.1'
+    implementation 'com.google.firebase:firebase-firestore:23.0.2'
     implementation platform('com.google.firebase:firebase-bom:27.1.0')
     implementation 'com.google.firebase:firebase-database'
     implementation 'com.google.firebase:firebase-database:20.0.0'
@@ -60,6 +60,7 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.shuhart.stepview:stepview:1.5.1'
     implementation 'com.jaredrummler:material-spinner:1.3.1'
+    implementation 'devs.mulham.horizontalcalendar:horizontalcalendar:1.3.4'
 
     implementation 'com.jakewharton:butterknife:10.0.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.0.0'
