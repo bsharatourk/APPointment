@@ -21,7 +21,6 @@ public class Profile extends AppCompatActivity {
     TextView name, mail;
     Button logout;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,18 +39,13 @@ public class Profile extends AppCompatActivity {
         }
 
 
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                startActivity(intent);
-            }
+        logout.setOnClickListener(view -> {
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+            startActivity(intent);
         });
 
 
     }
 
-    public void LogOut(View view) {
-    }
 }

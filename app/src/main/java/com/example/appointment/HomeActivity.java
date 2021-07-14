@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -95,6 +96,19 @@ public class HomeActivity extends AppCompatActivity {
     AlertDialog dialog;
 
     @Override
+    public void onBackPressed() {
+        if (shouldAllowBack()) {
+            super.onBackPressed();
+        } else {
+            //cancel the back button.
+        }
+    }
+
+    private boolean shouldAllowBack() {
+        return false;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
@@ -150,7 +164,7 @@ public class HomeActivity extends AppCompatActivity {
 
         //Toast.makeText(this,firebaseAuth.getCurrentUser().getPhoneNumber(),Toast.LENGTH_SHORT).show();
         Log.e(TAG, "GOY HERE 3");
-        if(firebaseAuth.getCurrentUser() !=null){
+        if(firebaseAuth.getCurrentUser() != null){
             Log.e(TAG, "GOY HERE 4: "+firebaseAuth.getCurrentUser().getPhoneNumber());
             if (firebaseAuth.getCurrentUser().getPhoneNumber()==null) {
                 Log.e(TAG, "GOY HERE 5");
@@ -205,6 +219,8 @@ public class HomeActivity extends AppCompatActivity {
             }else {
                 phoneVerify.dismiss();
             }
+        } else {
+            LogOut();
         }
 
 
@@ -399,10 +415,19 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
-    public void LogOut(View view) {
+    private void updateUI(@Nullable GoogleSignInAccount account) {
+        if (account != null) {
+            //...
+        } else {
+            LogOut();
+        }
+    }
+
+    public void LogOut() {
         FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(getApplicationContext(),MainActivity.class);
         startActivity(intent);
+        finish();
     }
 
 
