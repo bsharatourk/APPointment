@@ -58,6 +58,10 @@ public class MySalonAdapter extends RecyclerView.Adapter<MySalonAdapter.MyViewHo
                     cardView.setCardBackgroundColor(context.getResources()
                             .getColor(android.R.color.white));
                 }
+
+                Salon s =MySalonAdapter.this.salonList.get(pos);
+                Common.setCurrentSalon(s);
+
                 //set selected background only for the selected ones
                 myViewHolder.card_salon.setCardBackgroundColor(context.getResources()
                         .getColor(android.R.color.holo_orange_dark));

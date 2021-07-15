@@ -19,6 +19,7 @@ import com.example.appointment.Adapter.MyViewPagerAdapter;
 import com.example.appointment.Common.Common;
 import com.example.appointment.Common.NonSwipeViewPager;
 import com.example.appointment.Model.Barber;
+import com.example.appointment.Model.Salon;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -72,8 +73,8 @@ public class BookingActivity extends AppCompatActivity {
             //after choosing a salon
             if (Common.step == 1)
             {
-                if(Common.currentSalon != null) {
-                    loadBarberSalon(Common.currentSalon.getSalonId());
+                if(Common.getCurrentSalon() != null) {
+                    loadBarberSalon(Common.getCurrentSalon().getSalonId());
                 }
             }
             else if (Common.step == 2) // Pick a Booking time
@@ -143,13 +144,14 @@ public class BookingActivity extends AppCompatActivity {
 
             int step = intent.getIntExtra(Common.KEY_STEP,0);
             if(step == 1){
-                Common.currentSalon = intent.getParcelableExtra(Common.KEY_SALON_STORE);
+                Salon s = intent.getParcelableExtra(Common.KEY_SALON_STORE);
+                Common.setCurrentSalon(s);
             }else if (step == 2){
                 Common.currentBarber = intent.getParcelableExtra(Common.KEY_BARBER_SELECTED);
             }
 
 
-            Common.currentSalon = intent.getParcelableExtra(Common.KEY_SALON_STORE);
+            //Common.currentSalon = intent.getParcelableExtra(Common.KEY_SALON_STORE);
             btn_nest_step.setEnabled(true);
             setColorButton();
         }

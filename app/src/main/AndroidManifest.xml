@@ -15,7 +15,7 @@
         android:theme="@style/Theme.APPointment"
         android:usesCleartextTraffic="true"
         tools:replace="android:label">
-        <activity android:name=".BookingActivity"></activity>
+        <activity android:name=".BookingActivity" />
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">
@@ -27,7 +27,7 @@
         </activity>
         <activity
             android:name=".HomeActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Profile"
             android:screenOrientation="portrait" />

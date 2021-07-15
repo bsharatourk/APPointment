@@ -20,7 +20,15 @@ public class  Common {
     public static String phone="0000000000";
     public static String name;
     public static boolean LOGGED_IN_FLAG = false;
-    public static Salon currentSalon;
+    private static Salon currentSalon;
+    public static Salon getCurrentSalon()
+    {
+        return currentSalon;
+    }
+    public static void setCurrentSalon(Salon s)
+    {
+        currentSalon = s;
+    }
     public static int step = 0; // init at first should be 0
     public static String city="";
     public static Barber currentBarber;

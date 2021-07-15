@@ -83,11 +83,12 @@ public class BookingStep3Fragment extends Fragment implements ITimeSlotLoadListe
                 .collection("AllSalon")
                 .document(Common.city)
                 .collection("Branch")
-                .document(Common.currentSalon.getSalonId())
+                .document(Common.getCurrentSalon().getSalonId())
                 .collection("Barbers")
                 .document(Common.currentBarber.getBarberId());
 
         //get info about this specific barber
+
         barberDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -102,7 +103,7 @@ public class BookingStep3Fragment extends Fragment implements ITimeSlotLoadListe
                                 .collection("AllSalon")
                                 .document(Common.city)
                                 .collection("Branch")
-                                .document(Common.currentSalon.getSalonId())
+                                .document(Common.getCurrentSalon().getSalonId())
                                 .collection("Barbers")
                                 .document(Common.currentBarber.getBarberId())
                                 .collection(bookDate);
@@ -168,6 +169,7 @@ public class BookingStep3Fragment extends Fragment implements ITimeSlotLoadListe
         selected_date = Calendar.getInstance();
         //Init current Date
         selected_date.add(Calendar.DATE,0);
+
     }
 
     @Override
@@ -190,6 +192,7 @@ public class BookingStep3Fragment extends Fragment implements ITimeSlotLoadListe
     }
 
     private void init(View itemView) {
+
         recycler_time_slot.setHasFixedSize(true);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),3);
         recycler_time_slot.setLayoutManager(gridLayoutManager);

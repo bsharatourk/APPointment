@@ -57,6 +57,8 @@ public class MyBarberAdapter extends RecyclerView.Adapter<MyBarberAdapter.MyView
                     cardView.setCardBackgroundColor(context.getResources()
                             .getColor(android.R.color.white));
                 }
+
+                Common.currentBarber =MyBarberAdapter.this.barberList.get(i);
                 //Set background for choice
                 myViewHolder.card_barber.setCardBackgroundColor(
                         context.getResources()
@@ -67,6 +69,8 @@ public class MyBarberAdapter extends RecyclerView.Adapter<MyBarberAdapter.MyView
                 intent.putExtra(Common.KEY_BARBER_SELECTED,barberList.get(pos));
                 intent.putExtra(Common.KEY_STEP,1);
                 localBroadcastManager.sendBroadcast(intent);
+
+
             }
         });
     }
