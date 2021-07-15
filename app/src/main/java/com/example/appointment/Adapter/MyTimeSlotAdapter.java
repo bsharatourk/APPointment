@@ -44,7 +44,7 @@ public class MyTimeSlotAdapter extends RecyclerView.Adapter<MyTimeSlotAdapter.My
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
         myViewHolder.txt_time_slot.setText(new StringBuilder(Common.convertTimeSlotToString(i)).toString());
         // if all positions are available , show list
-        if(timeSlotsList.size()==0){
+        if(timeSlotsList.size() == 0){
             myViewHolder.card_time_slot.setCardBackgroundColor(context.getResources()
                     .getColor(android.R.color.white));
             myViewHolder.txt_time_slot_description.setText("Available");
@@ -54,7 +54,7 @@ public class MyTimeSlotAdapter extends RecyclerView.Adapter<MyTimeSlotAdapter.My
             .getColor(android.R.color.black));
         }else //if all slots is full ...
         {
-            for (TimeSlot slotValue : timeSlotsList) {
+            for (TimeSlot slotValue:timeSlotsList) {
                 // loop all time slot from server and set different color
                 int slot = Integer.parseInt(slotValue.getSlot().toString());
                 if(slot == i ){

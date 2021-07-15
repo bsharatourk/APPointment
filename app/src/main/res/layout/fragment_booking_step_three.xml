@@ -13,7 +13,7 @@
         android:id="@+id/calendarView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/design_default_color_primary"
+        android:background="@color/primary_defualt_color"
         app:textColorSelected="#FFFF"/>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_time_slot"

@@ -159,8 +159,7 @@ public class BookingStep3Fragment extends Fragment implements ITimeSlotLoadListe
         localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
         localBroadcastManager.registerReceiver(displayTimeSlot,
                 new IntentFilter(Common.KEY_DISPLAY_TIME_SLOT));
-        String date = "dd_MM_yyyy";
-        simpleDateFormat = new SimpleDateFormat(date);
+        simpleDateFormat = new SimpleDateFormat("dd_MM_yyyy");
 
         dialog = new SpotsDialog.Builder().setContext(getContext())
                 .setCancelable(false).build();
@@ -198,7 +197,7 @@ public class BookingStep3Fragment extends Fragment implements ITimeSlotLoadListe
         //Calendar
         Calendar startDate = Calendar.getInstance();
         startDate.add(Calendar.DATE,0);
-        //Abling to move and book 3 days from current day
+        //Abling to move and book 2 days from current day
         Calendar endDate = Calendar.getInstance();
         endDate.add(Calendar.DATE,2);
 
@@ -224,8 +223,8 @@ public class BookingStep3Fragment extends Fragment implements ITimeSlotLoadListe
     }
 
     @Override
-    public void onTimeSlotLoadSuccess(List<TimeSlot> timeSlotList) {
-        MyTimeSlotAdapter adapter = new MyTimeSlotAdapter(getContext(),timeSlotList);
+    public void onTimeSlotLoadSuccess(List<TimeSlot> List) {
+        MyTimeSlotAdapter adapter = new MyTimeSlotAdapter(getContext(),List);
         recycler_time_slot.setAdapter(adapter);
 
         dialog.dismiss();
