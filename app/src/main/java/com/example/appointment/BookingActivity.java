@@ -52,7 +52,6 @@ public class BookingActivity extends AppCompatActivity {
     Button btn_previous_step;
     @BindView(R.id.btn_next_step)
     Button btn_nest_step;
-
     //Event
     @OnClick(R.id.btn_previous_step)
     void previousStep(){
@@ -60,6 +59,10 @@ public class BookingActivity extends AppCompatActivity {
 
             Common.step--;
             viewPager.setCurrentItem(Common.step);
+            if(Common.step<3){
+                btn_nest_step.setEnabled(true);
+                setColorButton();
+            }
         }
     }
     @OnClick(R.id.btn_next_step)
@@ -83,8 +86,20 @@ public class BookingActivity extends AppCompatActivity {
                     loadTimeSlotOfBarber(Common.currentBarber.getBarberId());
                 }
             }
+            else if (Common.step == 3) // Confirmation
+            {
+                if (Common.currentTimeSlot != -1){
+                    confirmBooking();
+                }
+            }
             viewPager.setCurrentItem(Common.step);
         }
+    }
+
+    private void confirmBooking() {
+        // sending the broadcast to fragment 4
+        Intent intent = new Intent(Common.KEY_CONFIRM_BOOKING);
+        localBroadcastManager.sendBroadcast(intent);
     }
 
     private void loadTimeSlotOfBarber(String barberId) {
@@ -104,7 +119,8 @@ public class BookingActivity extends AppCompatActivity {
                     .collection("AllSalon")
                     .document(Common.city)
                     .collection("Branch")
-                    .document(salonId).collection("Barbers");
+                    .document(salonId)
+                    .collection("Barbers");
 
             barberRef.get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -145,13 +161,13 @@ public class BookingActivity extends AppCompatActivity {
             int step = intent.getIntExtra(Common.KEY_STEP,0);
             if(step == 1){
                 Salon s = intent.getParcelableExtra(Common.KEY_SALON_STORE);
-                Common.setCurrentSalon(s);
+               // Common.setCurrentSalon(s);
             }else if (step == 2){
                 Common.currentBarber = intent.getParcelableExtra(Common.KEY_BARBER_SELECTED);
+            }else if (step == 3){
+                Common.currentTimeSlot = intent.getIntExtra(Common.KEY_TIME_SLOT,-1);
             }
 
-
-            //Common.currentSalon = intent.getParcelableExtra(Common.KEY_SALON_STORE);
             btn_nest_step.setEnabled(true);
             setColorButton();
         }

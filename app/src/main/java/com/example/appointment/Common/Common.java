@@ -1,10 +1,11 @@
 package com.example.appointment.Common;
 
-import android.content.Intent;
-
 import com.example.appointment.Model.Barber;
 import com.example.appointment.Model.Salon;
 import com.example.appointment.User;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 
 public class  Common {
@@ -15,24 +16,31 @@ public class  Common {
     public static final String KEY_STEP = "STEP";
     public static final String KEY_BARBER_SELECTED = "BARBER_SELECTED";
     public static final int TIME_SLOT_TOTAL = 20;
+    public static final Object DISABLE_TAG = "DISABLE";
+    public static final String KEY_TIME_SLOT = "TIME_SLOT";
+    public static final String KEY_CONFIRM_BOOKING = "CONFIRM_BOOKING";
     public static String IS_LOGIN = "NotLogged";
-    public static User currentUser;
     public static String phone="0000000000";
     public static String name;
     public static boolean LOGGED_IN_FLAG = false;
+    public static int currentTimeSlot = -1;
+    public static Calendar currentDate = Calendar.getInstance();
+    public static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd_MM_yyyy");
     private static Salon currentSalon;
+    public static int step = 0; // init at first should be 0
+    public static String city="";
+    public static Barber currentBarber;
+    private static User currentUser;
+
     public static Salon getCurrentSalon()
     {
         return currentSalon;
     }
+    
     public static void setCurrentSalon(Salon s)
     {
         currentSalon = s;
     }
-    public static int step = 0; // init at first should be 0
-    public static String city="";
-    public static Barber currentBarber;
-
 
     public static void setPhone(String phone) {
         Common.phone = phone;
@@ -41,6 +49,10 @@ public class  Common {
     public static void setName(String name) {
         Common.name = name;
     }
+
+    public static User getcurrentUser(){
+        return currentUser;
+    };
 
     public static void setCurrentUser(User currentUser) {
         Common.currentUser = currentUser;

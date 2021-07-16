@@ -74,7 +74,7 @@ public class HomeFragment extends Fragment implements ILookbookLoadListener, IBa
 
     public HomeFragment() {
         bannerRef = FirebaseFirestore.getInstance().collection("Banner");
-        lookbookRef = FirebaseFirestore.getInstance().collection("Lookbook");
+        lookbookRef = FirebaseFirestore.getInstance().collection("LookBook");
 
     }
 
@@ -112,7 +112,8 @@ public class HomeFragment extends Fragment implements ILookbookLoadListener, IBa
         return view;
     }
     private void loadLookBook() {
-        lookbookRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        lookbookRef.get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 List<Banner> lookbooks = new ArrayList<>();

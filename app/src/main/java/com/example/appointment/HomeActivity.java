@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment;
 import com.example.appointment.Common.Common;
 import com.example.appointment.Fragments.HomeFragment;
 import com.example.appointment.Fragments.ShoppingFragment;
+import com.example.appointment.Model.Barber;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -49,7 +50,10 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -227,8 +231,8 @@ public class HomeActivity extends AppCompatActivity {
             if(isLogin)
             {
                 dialog.show();
-                if(Common.currentUser !=null){
-                    DocumentReference currentUser = userRef.document(Common.currentUser.getPhoneNum());
+                if(Common.getcurrentUser() !=null){
+                    DocumentReference currentUser = userRef.document(Common.getcurrentUser().getPhoneNum());
                     currentUser.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -265,6 +269,9 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 if (menuItem.getItemId() == R.id.action_Profile){
+
+                    User user = new User(name,mail,"000000");
+                    Common.setCurrentUser(user);
                     fragment = new HomeFragment();
                 }
                 else if(menuItem.getItemId() == R.id.action_shopping){
@@ -440,7 +447,7 @@ public class HomeActivity extends AppCompatActivity {
                                     dialog.dismiss();
                                 }
 
-                                Common.currentUser = user;
+                                Common.setCurrentUser(user);
                                // bottomNavigationView.setSelectedItemId(R.id.action_Profile);
                                 Toast.makeText(HomeActivity.this,"Thank You",Toast.LENGTH_SHORT).show();
                             }
