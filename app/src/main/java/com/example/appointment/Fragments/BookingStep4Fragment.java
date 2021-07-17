@@ -70,6 +70,7 @@ public class BookingStep4Fragment extends Fragment {
         bookingInformation.setTime(new StringBuilder(Common.convertTimeSlotToString(Common.currentTimeSlot))
                 .append(" at ")
                 .append(simpleDateFormat.format(Common.currentDate.getTime())).toString());
+
         bookingInformation.setSlot(Long.valueOf(Common.currentTimeSlot));
 
         //Submit the doc to barber barber doc
@@ -121,7 +122,7 @@ public class BookingStep4Fragment extends Fragment {
         txt_booking_time_text.setText(new StringBuilder(Common.convertTimeSlotToString(Common.currentTimeSlot))
         .append(" at ")
         .append(simpleDateFormat.format(Common.currentDate.getTime())));
-
+        txt_salon_phone.setText(Common.getCurrentSalon().getPhone());
         txt_salon_address.setText(Common.getCurrentSalon().getAddress());
         txt_salon_website.setText(Common.getCurrentSalon().getWebsite());
         txt_salon_name.setText(Common.getCurrentSalon().getName());
