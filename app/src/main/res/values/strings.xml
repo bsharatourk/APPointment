@@ -3,4 +3,9 @@
     <string name="didn_t_get_the_code_resend">Didn\'t Get The Code? <b>Resend!</b></string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="address_bullet">* Address:</string>
+    <string name="time_bullet">* Time:</string>
+    <string name="stylelist_bullet">* Barber Name:</string>
+    <string name="bullet">* </string>
+
 </resources>

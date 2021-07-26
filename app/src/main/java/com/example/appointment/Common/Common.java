@@ -24,7 +24,7 @@ public class  Common {
     public static String name;
     public static boolean LOGGED_IN_FLAG = false;
     public static int currentTimeSlot = -1;
-    public static Calendar currentDate = Calendar.getInstance();
+    public static Calendar bookingDate = Calendar.getInstance();
     public static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd_MM_yyyy");
     private static Salon currentSalon;
     public static int step = 0; // init at first should be 0
